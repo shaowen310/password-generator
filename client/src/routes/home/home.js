@@ -14,7 +14,7 @@ class Home extends React.Component {
             <Form.Item label="Master Password">
               <Input type="password" />
             </Form.Item>
-            <Form.Item label="Domain Name">
+            <Form.Item label="Second Password">
               <Input />
             </Form.Item>
             <Form.Item label="Length">
