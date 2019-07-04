@@ -2,10 +2,6 @@ import React from "react";
 import { Layout, Form, Input, Button } from "element-react";
 
 class Home extends React.Component {
-  componentDidMount() {
-    document.title = "Home";
-  }
-
   render() {
     return (
       <div>
