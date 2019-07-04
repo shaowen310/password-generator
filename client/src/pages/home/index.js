@@ -1,31 +1,63 @@
 import React from "react";
 import { Layout, Form, Input, Button } from "element-react";
+import update from "immutability-helper";
 
 class Home extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      form: {
+        masterPassword: "",
+        secondPassword: "",
+        length: "12",
+        generatedPassword: ""
+      }
+    };
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    console.log(this.state);
+  }
+
+  handleChange(key, value) {
+    const newForm = update(this.state.form, { [key]: { $set: value } });
+    this.setState({ form: newForm });
+  }
+
   render() {
     return (
       <div>
         <Layout.Row>
-          <Form>
+          <Form model={this.state.form} onSubmit={this.handleSubmit.bind(this)}>
             <Form.Item label="Master Password">
-              <Input type="password" />
+              <Input
+                value={this.state.form.masterPassword}
+                onChange={this.handleChange.bind(this, "masterPassword")}
+                type="password"
+              />
             </Form.Item>
             <Form.Item label="Second Password">
-              <Input />
+              <Input
+                value={this.state.form.secondPassword}
+                onChange={this.handleChange.bind(this, "secondPassword")}
+              />
             </Form.Item>
             <Form.Item label="Length">
-              <Input />
+              <Input
+                value={this.state.form.length}
+                onChange={this.handleChange.bind(this, "length")}
+              />
             </Form.Item>
             <Form.Item>
-              <Button type="primary">Generate</Button>
+              <Button type="primary" nativeType="submit">
+                Generate
+              </Button>
               <Button>Clear</Button>
             </Form.Item>
-          </Form>
-        </Layout.Row>
-        <Layout.Row>
-          <Form>
             <Form.Item label="Generated Password">
-              <Input />
+              <Input value={this.state.form.generatedPassword} readOnly />
             </Form.Item>
           </Form>
         </Layout.Row>

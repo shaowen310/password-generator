@@ -26,7 +26,7 @@ func generatePassword(w http.ResponseWriter, r *http.Request) {
 func main() {
 	var router = mux.NewRouter()
 
-	router.HandleFunc("/generatePassword", generatePassword).Methods("POST")
+	router.HandleFunc("/api/generatePassword", generatePassword).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
