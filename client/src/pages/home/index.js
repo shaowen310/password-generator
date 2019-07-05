@@ -1,6 +1,7 @@
 import React from "react";
 import { Layout, Form, Input, Button } from "element-react";
 import update from "immutability-helper";
+import axios from "axios";
 
 class Home extends React.Component {
   constructor(props) {
@@ -18,7 +19,19 @@ class Home extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    console.log(this.state);
+    const reqBody = update(this.state.form, { $unset: ["generatedPassword"] });
+    axios
+      .post("/api/generatePassword", reqBody, {
+        headers: {
+          "content-type": "application/json"
+        }
+      })
+      .then(resp => {
+        this.setState({ form: resp.data });
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 
   handleChange(key, value) {
