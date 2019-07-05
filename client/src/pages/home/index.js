@@ -27,7 +27,14 @@ class Home extends React.Component {
         }
       })
       .then(resp => {
-        this.setState({ form: resp.data });
+        if (
+          resp.data !== undefined &&
+          resp.data.generatedPassword !== undefined
+        ) {
+          this.setState({ form: resp.data });
+        } else {
+          console.error("Invalid response");
+        }
       })
       .catch(err => {
         console.error(err);
