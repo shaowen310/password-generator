@@ -1,9 +1,14 @@
 package main
 
 import (
+	"crypto/hmac"
+	"crypto/sha512"
+	"encoding/base64"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -15,18 +20,31 @@ type passwordGen struct {
 	GeneratedPassword string `json:"generatedPassword"`
 }
 
-func generatePassword(w http.ResponseWriter, r *http.Request) {
+func generatePassword(passwordGen passwordGen) string {
+	hash := hmac.New(sha512.New, []byte(passwordGen.MasterPassword))
+	io.WriteString(hash, passwordGen.SecondPassword)
+
+	len, err := strconv.Atoi(passwordGen.Length)
+	if err != nil {
+		return err.Error()
+	}
+
+	str := base64.StdEncoding.EncodeToString(hash.Sum(nil))
+	return str[0:len]
+}
+
+func handleGeneratePassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var passwordGen passwordGen
 	json.NewDecoder(r.Body).Decode(&passwordGen)
-	passwordGen.GeneratedPassword = "test"
+	passwordGen.GeneratedPassword = generatePassword(passwordGen)
 	json.NewEncoder(w).Encode(passwordGen)
 }
 
 func main() {
-	var router = mux.NewRouter()
+	router := mux.NewRouter()
 
-	router.HandleFunc("/api/generatePassword", generatePassword).Methods("POST")
+	router.HandleFunc("/api/generatePassword", handleGeneratePassword).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":5000", router))
 }
