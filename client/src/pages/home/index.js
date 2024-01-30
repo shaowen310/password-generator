@@ -1,23 +1,14 @@
-import React from "react";
-import { Layout, Form, Input, Button } from "element-react";
+import React, { useState } from "react";
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import update from "immutability-helper";
 import axios from "axios";
 
-class Home extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      form: {
-        masterPassword: "",
-        secondPassword: "",
-        length: "12",
-        generatedPassword: ""
-      }
-    };
-  }
+function Home() {
+  const [primaryPassword, setPrimaryPassword] = useState('');
 
-  handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const reqBody = update(this.state.form, { $unset: ["generatedPassword"] });
     axios
@@ -39,17 +30,25 @@ class Home extends React.Component {
       .catch(err => {
         console.error(err);
       });
-  }
+  };
 
-  handleChange(key, value) {
-    const newForm = update(this.state.form, { [key]: { $set: value } });
-    this.setState({ form: newForm });
-  }
+  return (
+    <div>
+      <Form>
+        <Form.Group className="mb-3" controlId="primaryPassword">
+          <Form.Label>Primary password</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Enter a primary password"
+            value={primaryPassword}
+            onChange={(e) => setPrimaryPassword(e.target.value)} />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control type="password" placeholder="Password" />
+        </Form.Group>
 
-  render() {
-    return (
-      <div>
-        <Layout.Row>
+        {/* <Layout.Row>
           <Form model={this.state.form} onSubmit={this.handleSubmit.bind(this)}>
             <Form.Item label="Master Password">
               <Input
@@ -72,18 +71,15 @@ class Home extends React.Component {
             </Form.Item>
             <Form.Item>
               <Button type="primary" nativeType="submit">
-                Generate
-              </Button>
-              <Button>Clear</Button>
-            </Form.Item>
-            <Form.Item label="Generated Password">
-              <Input value={this.state.form.generatedPassword} readOnly />
-            </Form.Item>
-          </Form>
-        </Layout.Row>
-      </div>
-    );
-  }
+                Generate */}
+
+
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
+    </div>
+  );
 }
 
 export default Home;
