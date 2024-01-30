@@ -1,28 +1,32 @@
 import React, { useState } from "react";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import update from "immutability-helper";
 import axios from "axios";
 
 
-function Home() {
-  const [primaryPassword, setPrimaryPassword] = useState('');
+function PasswordForm() {
+  const [form, setForm] = useState({ primaryPassword: '', password: '', passwordLength: 12 });
+  const [generatedPassword, setGeneratedPassword] = useState('');
+
+  const handleChange = async (e) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const reqBody = update(this.state.form, { $unset: ["generatedPassword"] });
+    const reqBody = JSON.stringify(form);
     axios
       .post("/api/generatePassword", reqBody, {
         headers: {
           "content-type": "application/json"
-        }
+        },
       })
       .then(resp => {
         if (
           resp.data !== undefined &&
           resp.data.generatedPassword !== undefined
         ) {
-          this.setState({ form: resp.data });
+          setGeneratedPassword(resp.data);
         } else {
           console.error("Invalid response");
         }
@@ -34,52 +38,41 @@ function Home() {
 
   return (
     <div>
-      <Form>
-        <Form.Group className="mb-3" controlId="primaryPassword">
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3 pt-3" controlId="primaryPassword">
           <Form.Label>Primary password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Enter a primary password"
-            value={primaryPassword}
-            onChange={(e) => setPrimaryPassword(e.target.value)} />
+            value={form.primaryPassword}
+            onChange={handleChange} />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Group className="mb-3" controlId="password">
           <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" />
+          <Form.Control
+            type="password"
+            placeholder="Enter a password"
+            value={form.password}
+            onChange={handleChange} />
         </Form.Group>
-
-        {/* <Layout.Row>
-          <Form model={this.state.form} onSubmit={this.handleSubmit.bind(this)}>
-            <Form.Item label="Master Password">
-              <Input
-                value={this.state.form.masterPassword}
-                onChange={this.handleChange.bind(this, "masterPassword")}
-                type="password"
-              />
-            </Form.Item>
-            <Form.Item label="Second Password">
-              <Input
-                value={this.state.form.secondPassword}
-                onChange={this.handleChange.bind(this, "secondPassword")}
-              />
-            </Form.Item>
-            <Form.Item label="Length">
-              <Input
-                value={this.state.form.length}
-                onChange={this.handleChange.bind(this, "length")}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" nativeType="submit">
-                Generate */}
-
-
+        <Form.Group className="mb-3" controlId="passwordLength">
+          <Form.Label>Length of the password to generate</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Enter a length"
+            value={form.passwordLength}
+            onChange={handleChange} />
+        </Form.Group>
         <Button variant="primary" type="submit">
-          Submit
+          Generate
         </Button>
       </Form>
+      <Form.Group className="mb-3 pt-3" controlId="generatedPassword">
+        <Form.Label>Generated Password</Form.Label>
+        <input className="form-control" type="text" value={generatedPassword} readOnly />
+      </Form.Group>
     </div>
   );
 }
 
-export default Home;
+export default PasswordForm;
