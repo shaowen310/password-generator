@@ -4,7 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## UI
 
-![UI](https://github.com/shaowen310/password-generator/blob/master/client/image/ui.jpg?raw=true)
+![UI](https://github.com/shaowen310/password-generator/blob/master/client/image/ui.png?raw=true)
 
 ## API Proxy
 
